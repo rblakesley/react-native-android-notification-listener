@@ -27,7 +27,7 @@ public class RNAndroidNotificationListener extends NotificationListenerService {
 
         Intent serviceIntent = new Intent(context, RNAndroidNotificationListenerHeadlessJsTaskService.class);
 
-        RNNotification notification = new RNNotification(context, sbn);
+        RNNotification notification = new RNNotification(context, sbn, "add");
 
         Gson gson = new Gson();
         String serializedNotification = gson.toJson(notification);
@@ -40,5 +40,21 @@ public class RNAndroidNotificationListener extends NotificationListenerService {
     }
 
     @Override
-    public void onNotificationRemoved(StatusBarNotification sbn) {}
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+        
+        Context context = getApplicationContext();
+
+        Intent serviceIntent = new Intent(context, RNAndroidNotificationListenerHeadlessJsTaskService.class);
+
+        RNNotification notification = new RNNotification(context, sbn, "remove");
+
+        Gson gson = new Gson();
+        String serializedNotification = gson.toJson(notification);
+
+        serviceIntent.putExtra("notification", serializedNotification);
+
+        HeadlessJsTaskService.acquireWakeLockNow(context);
+
+        context.startService(serviceIntent);
+    }
 }
