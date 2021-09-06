@@ -8,6 +8,7 @@ import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.app.Notification;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import com.facebook.react.HeadlessJsTaskService;
 
@@ -22,6 +23,9 @@ public class RNAndroidNotificationListener extends NotificationListenerService {
             Log.d(TAG, "The notification received has no data");
             return;
         }
+
+        Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        Log.v(TAG, prettyGson.toJson(statusBarNotification));
 
         Context context = getApplicationContext();
 

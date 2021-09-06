@@ -25,6 +25,7 @@ public class RNNotification {
     protected String key;
     protected int id;
     protected String category;
+    protected int flags;
     protected String title;
     protected String titleBig;
     protected String text;
@@ -51,9 +52,9 @@ public class RNNotification {
 
         if (addRemove=="add") {
             Notification notification = sbn.getNotification();
-
             if (notification != null && notification.extras != null) {
                 this.category = notification.category;
+                this.flags = notification.flags;
                 this.title = this.getPropertySafely(notification, Notification.EXTRA_TITLE);
                 this.titleBig = this.getPropertySafely(notification, Notification.EXTRA_TITLE_BIG);
                 this.text = this.getPropertySafely(notification, Notification.EXTRA_TEXT);
@@ -112,14 +113,15 @@ public class RNNotification {
             String result = "";
  
             Icon iconInstance = notification.getSmallIcon();
-            Drawable iconDrawable = iconInstance.loadDrawable(context);
-            Bitmap iconBitmap = ((BitmapDrawable) iconDrawable).getBitmap();
+            if (iconInstance != null) {
+                Drawable iconDrawable = iconInstance.loadDrawable(context);
+                Bitmap iconBitmap = ((BitmapDrawable) iconDrawable).getBitmap();
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            iconBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                iconBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
 
-            result = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
-
+                result = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+            }
             return TextUtils.isEmpty(result) ? result : "data:image/png;base64," + result;
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
@@ -134,14 +136,15 @@ public class RNNotification {
             String result = "";
  
             Icon iconInstance = notification.getLargeIcon();
-            Drawable iconDrawable = iconInstance.loadDrawable(context);
-            Bitmap iconBitmap = ((BitmapDrawable) iconDrawable).getBitmap();
+            if (iconInstance != null) {
+                Drawable iconDrawable = iconInstance.loadDrawable(context);
+                Bitmap iconBitmap = ((BitmapDrawable) iconDrawable).getBitmap();
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            iconBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                iconBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
 
-            result = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
-
+                result = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
+            }
             return TextUtils.isEmpty(result) ? result : "data:image/png;base64," + result;
         } catch (Exception e) {
             Log.d(TAG, e.getMessage());
