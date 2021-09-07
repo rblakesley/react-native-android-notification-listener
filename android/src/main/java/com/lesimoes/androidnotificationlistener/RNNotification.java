@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.util.Log;
 import java.util.ArrayList;
 import android.content.pm.PackageManager;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.Bitmap;
@@ -22,6 +23,7 @@ public class RNNotification {
     
     protected String event;
     protected String app;
+    protected String appName;
     protected String key;
     protected int id;
     protected String category;
@@ -49,6 +51,15 @@ public class RNNotification {
         this.time = sbn.getPostTime();
         this.key = sbn.getKey();
         this.id = sbn.getId();
+
+        final PackageManager pm = context.getApplicationContext().getPackageManager(); 
+        ApplicationInfo ai; 
+        try { 
+             ai = pm.getApplicationInfo( packageName, 0); 
+        } catch (final PackageManager.NameNotFoundException e) { 
+             ai = null; 
+        } 
+        this.appName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
 
         if (addRemove=="add") {
             Notification notification = sbn.getNotification();
