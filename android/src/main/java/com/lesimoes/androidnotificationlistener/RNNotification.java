@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory;
 import android.service.notification.StatusBarNotification;
 import android.text.TextUtils;
 import android.app.Notification;
+//import android.app.NotificationManager;
 import android.util.Log;
 import java.util.ArrayList;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ public class RNNotification {
     protected int id;
     protected String category;
     protected int flags;
+    protected Boolean important;
     protected String title;
     protected String titleBig;
     protected String text;
@@ -61,27 +63,28 @@ public class RNNotification {
         } 
         this.appName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
 
-        if (addRemove=="add") {
-            Notification notification = sbn.getNotification();
-            if (notification != null && notification.extras != null) {
-                this.category = notification.category;
-                this.flags = notification.flags;
-                this.title = this.getPropertySafely(notification, Notification.EXTRA_TITLE);
-                this.titleBig = this.getPropertySafely(notification, Notification.EXTRA_TITLE_BIG);
-                this.text = this.getPropertySafely(notification, Notification.EXTRA_TEXT);
-                this.subText = this.getPropertySafely(notification, Notification.EXTRA_SUB_TEXT);
-                this.summaryText = this.getPropertySafely(notification, Notification.EXTRA_SUMMARY_TEXT);
-                this.bigText = this.getPropertySafely(notification, Notification.EXTRA_BIG_TEXT);
-                this.audioContentsURI = this.getPropertySafely(notification, Notification.EXTRA_AUDIO_CONTENTS_URI);
-                this.imageBackgroundURI = this.getPropertySafely(notification, Notification.EXTRA_BACKGROUND_IMAGE_URI);
-                this.extraInfoText = this.getPropertySafely(notification, Notification.EXTRA_INFO_TEXT);
+        Notification notification = sbn.getNotification();
+        if (notification != null && notification.extras != null) {
+            this.category = notification.category;
+            this.flags = notification.flags;
+            this.important = notification.priority > Notification.PRIORITY_DEFAULT;
+            this.title = this.getPropertySafely(notification, Notification.EXTRA_TITLE);
+            this.titleBig = this.getPropertySafely(notification, Notification.EXTRA_TITLE_BIG);
+            this.text = this.getPropertySafely(notification, Notification.EXTRA_TEXT);
+            this.subText = this.getPropertySafely(notification, Notification.EXTRA_SUB_TEXT);
+            this.summaryText = this.getPropertySafely(notification, Notification.EXTRA_SUMMARY_TEXT);
+            this.bigText = this.getPropertySafely(notification, Notification.EXTRA_BIG_TEXT);
+            this.audioContentsURI = this.getPropertySafely(notification, Notification.EXTRA_AUDIO_CONTENTS_URI);
+            this.imageBackgroundURI = this.getPropertySafely(notification, Notification.EXTRA_BACKGROUND_IMAGE_URI);
+            this.extraInfoText = this.getPropertySafely(notification, Notification.EXTRA_INFO_TEXT);
+            this.groupedMessages = this.getGroupedNotifications(notification);
+            if (addRemove=="add") {
                 this.iconLarge = this.getNotificationLargeIcon(context, notification);
                 this.icon = this.getNotificationIcon(context, notification);
                 this.image = this.getNotificationImage(notification);
-                this.groupedMessages = this.getGroupedNotifications(notification);
-            } else {
-                Log.d(TAG, "The notification received has no data");
             }
+        } else {
+            Log.d(TAG, "The notification received has no data");
         }
     }
 
